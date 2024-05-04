@@ -8,10 +8,12 @@ public:
     explicit SOAR_Servo(int pin);
     void setup();
     void move(int startAngle, int endAngle);
+    void autoMove(int endAngle);
 
 private:
     Servo myservo;
     int servoPin;
+    int currentDegrees;
 };
 
 #endif

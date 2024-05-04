@@ -1,8 +1,9 @@
 
 ### TORSO RANGES
 
-`Min`: 0 deg
-`Max`: 40 deg
+**Min**: `0 deg`
+**Middle**: `17 deg`
+**Max**: `36 deg`
 
 ### ARM RANGES
 Arming procedure:
