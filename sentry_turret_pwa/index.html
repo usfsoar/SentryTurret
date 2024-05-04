@@ -11,7 +11,8 @@
     <input type="text" id="torsoTrigger" placeholder="Enter Torso Extension">
     <button onclick="sendInitCommand('TT')">Move Torso</button>
 
-    <button onclick="sendInitCommand('ZT')">Trigger Taser</button>
+    <button onclick="sendInitCommand('ZT:1')">Trigger Taser</button>
+    <button onclick="sendInitCommand('ZT:0')">Stop Taser</button>
     <p id="status">Status: Disconnected</p>
 
     <script>
@@ -59,8 +60,8 @@
         }
 
         async function sendInitCommand(type) {
-            if (type==='ZT') {
-                await sendCommand('ZT');
+            if (type==='ZT:1' || type==='ZT:0') {
+                await sendCommand(type);
             }else {
                 if (type==='AT') {
                     const numberInput = document.getElementById('armsTrigger').value;
