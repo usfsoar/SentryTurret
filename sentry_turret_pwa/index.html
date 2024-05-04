@@ -61,18 +61,24 @@
         async function sendInitCommand(type) {
             if (type==='ZT') {
                 await sendCommand('ZT');
-            }else{
-                const numberInput = document.getElementById('numberInput').value;
-                if (!isNaN(numberInput) && numberInput.trim() !== '') {
-                    if (type==='AT') {
+            }else {
+                if (type==='AT') {
+                    const numberInput = document.getElementById('armsTrigger').value;
+                    if (!isNaN(numberInput) && numberInput.trim() !== '') {
                         const atCommand = `AT:${numberInput}`;
                         await sendCommand(atCommand);
-                    } else if (type==='TT') {
-                        const ttCommand = `TT:${numberInput}`;
-                        await sendCommand(ttCommand);
+                    } else {
+                        console.error('Invalid number input!');
                     }
-                } else {
-                    console.error('Invalid number input!');
+                }
+                if (type==='TT') {
+                    const numberInput = document.getElementById('torsoTrigger').value;
+                    if (!isNaN(numberInput) && numberInput.trim() !== '') {
+                        const atCommand = `TT:${numberInput}`;
+                        await sendCommand(atCommand);
+                    } else {
+                        console.error('Invalid number input!');
+                    }
                 }
             }  
         }
