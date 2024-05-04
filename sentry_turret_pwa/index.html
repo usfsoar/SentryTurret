@@ -93,7 +93,7 @@
                 var mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
                 // Check if button clicked (change coordinates based on button size and position)
-                if (mouseX >= 640 && mouseX <= 690 && mouseY >= 200 && mouseY <= 200 + buttonHeight) {
+                if (mouseX >= 600 && mouseX <= 600 && mouseY >= 200 && mouseY <= 200 + buttonHeight) {
                     sendInitCommand('AT');
                     console.log('Move Arms');
                 } else if (mouseX >= 300 && mouseX <= 450 && mouseY >= 100 && mouseY <= 150) {
