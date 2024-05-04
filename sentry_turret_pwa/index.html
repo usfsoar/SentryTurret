@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BLE Device Controller</title>
+</head>
+<body>
+    <h1>Control Panel for BLE Device</h1>
+    <button onclick="sendCommand('A')">Move Arms Out</button>
+    <button onclick="sendCommand('B')">Move Arms In</button>
+    <button onclick="sendCommand('C')">Move Torso Left</button>
+    <button onclick="sendCommand('D')">Move Torso Right</button>
+    <p id="status">Status: Disconnected</p>
+
+    <script>
+        let bleDevice = null;
+        let writeCharacteristic = null;
+
+        async function connectToDevice() {
+            try {
+                const serviceUuid = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+                const characteristicUuid = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+                
+                console.log('Requesting Bluetooth Device...');
+                bleDevice = await navigator.bluetooth.requestDevice({
+    filters: [{
+        name: "SOAR_SentryTurret"
+    }],
+    optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+});
+                
+                console.log('Connecting to GATT Server...');
+                const server = await bleDevice.gatt.connect();
+                
+                console.log('Getting Service...');
+                const service = await server.getPrimaryService(serviceUuid);
+                
+                console.log('Getting Characteristic...');
+                writeCharacteristic = await service.getCharacteristic(characteristicUuid);
+
+                document.getElementById('status').textContent = "Status: Connected";
+            } catch (error) {
+                console.error('Connection failed!', error);
+                document.getElementById('status').textContent = `Status: ${error}`;
+            }
+        }
+
+        async function sendCommand(command) {
+            if (!writeCharacteristic) {
+                await connectToDevice();
+            }
+            if (writeCharacteristic) {
+                console.log(`Sending command: ${command}`);
+                let encoder = new TextEncoder('utf-8');
+                await writeCharacteristic.writeValue(encoder.encode(command));
+            }
+        }
+    </script>
+</body>
+</html>
