@@ -9,7 +9,7 @@
     <button onclick="sendInitCommand('AT')">Move Amrs</button>
 
     <input type="text" id="torsoTrigger" placeholder="Enter Torso Extension">
-    <button onclick="sendInitCommand('TT')">Move Amrs</button>
+    <button onclick="sendInitCommand('TT')">Move Torso</button>
 
     <button onclick="sendInitCommand('ZT')">Trigger Taser</button>
     <p id="status">Status: Disconnected</p>
@@ -68,7 +68,7 @@
                         const atCommand = `AT:${numberInput}`;
                         await sendCommand(atCommand);
                     } else {
-                        console.error('Invalid number input!');
+                        console.error('Invalid arms input!');
                     }
                 }
                 if (type==='TT') {
@@ -77,7 +77,7 @@
                         const atCommand = `TT:${numberInput}`;
                         await sendCommand(atCommand);
                     } else {
-                        console.error('Invalid number input!');
+                        console.error('Invalid toso input!');
                     }
                 }
             }  
