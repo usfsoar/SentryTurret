@@ -2,9 +2,12 @@
 <html>
 <head>
     <title>BLE Device Controller</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <h1>Control Panel for BLE Device</h1>
+    <canvas id="controllerCanvas"></canvas>
+
+    <!-- <h1>Control Panel for BLE Device</h1>
     <input type="text" id="armsTrigger" placeholder="Enter Arms Extension">
     <button onclick="sendInitCommand('AT')">Move Amrs</button>
 
@@ -13,9 +16,100 @@
 
     <button onclick="sendInitCommand('ZT:1')">Trigger Taser</button>
     <button onclick="sendInitCommand('ZT:0')">Stop Taser</button>
-    <p id="status">Status: Disconnected</p>
+    <p id="status">Status: Disconnected</p> -->
 
     <script>
+        // Canvas controller
+        window.onload = function() {
+            // Get canvas element
+            var canvas = document.getElementById('controllerCanvas');
+            var ctx = canvas.getContext('2d');
+
+            // Create Image object for background
+            var backgroundImg = new Image();
+            backgroundImg.src = 'background.png';
+
+            // Draw background image
+            backgroundImg.onload = function() {
+                // Calculate aspect ratio of the background image
+                var aspectRatio = backgroundImg.width / backgroundImg.height;
+
+                // Calculate canvas width and height based on window size
+                var canvasWidth = window.innerWidth;
+                var canvasHeight = window.innerWidth / aspectRatio;
+
+                // Check if canvas height exceeds window height
+                if (canvasHeight > window.innerHeight) {
+                    canvasHeight = window.innerHeight;
+                    canvasWidth = window.innerHeight * aspectRatio;
+                }
+
+                // Set canvas width and height
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+
+                ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+                
+                // Draw text boxes
+                drawTextBox(ctx, 645, 219, "0-60");
+                drawTextBox(ctx, 525, 395, "0-60");
+                
+                // Draw buttons
+                drawButton(ctx, "Move Arms", 700, 200);
+                drawButton(ctx, "Move Torso", 525, 370);
+                drawButton(ctx, "Trigger Taser", 100, 100);
+                drawButton(ctx, "Stop Taser", 100, 170);
+            };
+
+            // Function to draw text boxes
+            function drawTextBox(ctx, x, y, placeholder) {
+                // Draw placeholder text inside the text box
+                ctx.fillStyle = 'black'; // Placeholder text color
+                ctx.font = 'italic 12px Arial';
+                ctx.fillText(placeholder, x + 165, y + 5);
+            }
+
+            // Function to draw buttons
+            function drawButton(ctx, text, x, y) {
+                // Button styles
+                var buttonWidth = 100;
+                var buttonHeight = 40;
+                
+                ctx.fillStyle = '#3498db';
+                ctx.fillRect(x, y, buttonWidth, buttonHeight);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '15px Arial';
+                
+                // Center text horizontally and vertically
+                var textX = x + (buttonWidth - ctx.measureText(text).width) / 2;
+                var textY = y + buttonHeight / 2 + 5; // Adjust vertical position for centering
+                
+                ctx.fillText(text, textX, textY);
+            }
+
+            // Add event listener for button click
+            canvas.addEventListener('click', function(event) {
+                var mouseX = event.clientX - canvas.getBoundingClientRect().left;
+                var mouseY = event.clientY - canvas.getBoundingClientRect().top;
+
+                // Check if button clicked (change coordinates based on button size and position)
+                if (mouseX >= 640 && mouseX <= 690 && mouseY >= 200 && mouseY <= 200 + buttonHeight) {
+                    sendInitCommand('AT');
+                    console.log('Move Arms');
+                } else if (mouseX >= 300 && mouseX <= 450 && mouseY >= 100 && mouseY <= 150) {
+                    console.log('Move Torso');
+                    sendInitCommand('TT');
+                } else if (mouseX >= 500 && mouseX <= 650 && mouseY >= 100 && mouseY <= 150) {
+                    sendInitCommand('ZT:1');
+                    console.log('trigger Taser');
+                } else if (mouseX >= 700 && mouseX <= 850 && mouseY >= 100 && mouseY <= 150) {
+                    sendInitCommand('ZT:0');
+                    console.log('stop taser');
+                }
+            });
+        };
+
+        // BLE Device Controller
         let bleDevice = null;
         let writeCharacteristic = null;
 
@@ -65,7 +159,7 @@
             }else {
                 if (type==='AT') {
                     const numberInput = document.getElementById('armsTrigger').value;
-                    if (!isNaN(numberInput) && numberInput.trim() !== '') {
+                    if (!isNaN(numberInput) && numberInput.trim() !== '' && numberInput >= 0 && numberInput <= 60 && numberInput!==null) {
                         const atCommand = `AT:${numberInput}`;
                         await sendCommand(atCommand);
                     } else {
@@ -78,7 +172,7 @@
                         const atCommand = `TT:${numberInput}`;
                         await sendCommand(atCommand);
                     } else {
-                        console.error('Invalid toso input!');
+                        console.error('Invalid torso input!');
                     }
                 }
             }  
