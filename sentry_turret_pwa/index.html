@@ -5,10 +5,13 @@
 </head>
 <body>
     <h1>Control Panel for BLE Device</h1>
-    <button onclick="sendCommand('A')">Move Arms Out</button>
-    <button onclick="sendCommand('B')">Move Arms In</button>
-    <button onclick="sendCommand('C')">Move Torso Left</button>
-    <button onclick="sendCommand('D')">Move Torso Right</button>
+    <input type="text" id="armsTrigger" placeholder="Enter Arms Extension">
+    <button onclick="sendInitCommand('AT')">Move Amrs</button>
+
+    <input type="text" id="torsoTrigger" placeholder="Enter Torso Extension">
+    <button onclick="sendInitCommand('TT')">Move Amrs</button>
+
+    <button onclick="sendInitCommand('ZT')">Trigger Taser</button>
     <p id="status">Status: Disconnected</p>
 
     <script>
@@ -26,7 +29,7 @@
         name: "SOAR_SentryTurret"
     }],
     optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
-});
+    });
                 
                 console.log('Connecting to GATT Server...');
                 const server = await bleDevice.gatt.connect();
@@ -53,6 +56,25 @@
                 let encoder = new TextEncoder('utf-8');
                 await writeCharacteristic.writeValue(encoder.encode(command));
             }
+        }
+
+        async function sendInitCommand(type) {
+            if (type==='ZT') {
+                await sendCommand('ZT');
+            }else{
+                const numberInput = document.getElementById('numberInput').value;
+                if (!isNaN(numberInput) && numberInput.trim() !== '') {
+                    if (type==='AT') {
+                        const atCommand = `AT:${numberInput}`;
+                        await sendCommand(atCommand);
+                    } else if (type==='TT') {
+                        const ttCommand = `TT:${numberInput}`;
+                        await sendCommand(ttCommand);
+                    }
+                } else {
+                    console.error('Invalid number input!');
+                }
+            }  
         }
     </script>
 </body>
